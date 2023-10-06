@@ -95,6 +95,57 @@ order by city;
 select distinct year(birth_date) as birth_year from patients
 order by birth_year ASC;
 *************************************************************************************
+#Show first and last name, allergies from patients which have allergies to either 'Penicillin' or 'Morphine'. Show results ordered ascending by allergies then by first_name then by last_name.
+select first_name, 
+	   last_name,
+       allergies 
+from patients 
+where allergies IN ('Penicillin', 'Morphine') 
+order by allergies, first_name,last_name;
+*****************************************************************************************************************************************
+#Show the city and the total number of patients in the city.Order from most to least patients and then by city name ascending.
+select city, count(patient_id) as total_patient from patients
+group by city 
+order by total_patient desc, city asc;
+*****************************************************************************************************************************************
+#Show patient_id, first_name, last_name from patients whose does not have any records in the admissions table. (Their patient_id does not exist in any admissions.patient_id rows.)
+select patients.patient_id, first_name, last_name from patients
+where patient_id not in(select admissions.patient_id from admissions);
+****************************************************************************************************************************************
+#Show all patient's first_name, last_name, and birth_date who were born in the 1970s decade. Sort the list starting from the earliest birth_date.
+select first_name, last_name, birth_date from patients
+where year(birth_date) between 1970 and 1979
+order by birth_date asc;
+*****************************************************************************************************************************************
+#Show the difference between the largest weight and smallest weight for patients with the last name 'Maroni'
+select (max(weight)-min(weight)) from patients
+where last_name='Maroni';
+****************************************************************************************************************************************
+#Display the total amount of patients for each province. Order by descending.
+select count(patient_id) as patient_count, province_name from patients
+inner join province_names
+on patients.province_id=province_names.province_id
+group by province_name
+order by patient_count desc;
+**************************************************************************************************************************
+#For each doctor, display their id, full name, and the first and last admission date they attended.
+select doctor_id, 
+	first_name ||' '|| last_name as full_name, 
+        min(admission_date) as first_admission_date,
+        max(admission_date) as last_admission_date
+from admissions
+join doctors
+on admissions.attending_doctor_id=doctors.doctor_id
+group by doctor_id;
+*******************************************************************************************************************************
+#Show the province_id(s), sum of height; where the total sum of its patient's height is greater than or equal to 7,000.
+select province_id, 
+       sum(height) as sum_height 
+from patients
+group by province_id
+having sum_height>=7000
+**************************************************************************************************************************
+
 
 
 
